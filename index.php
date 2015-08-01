@@ -118,7 +118,7 @@ if (!empty($list)) {
 
     } else {
 
-        echo '<h3><i class="fa fa-list-alt"></i> <strong>' . htmlspecialchars($list, ENT_QUOTES, 'UTF-8') . '</strong>' . $directory->listsuffix . ' <a class="btn btn-primary" href="' . $directory->getmailtolink($list) . '"><i class="fa fa-envelope"></i> Send Email To List</a></h3>';
+        echo '<h3><i class="fa fa-list-alt"></i> <strong>' . htmlspecialchars($list, ENT_QUOTES, 'UTF-8') . '</strong>' . $directory->listsuffix . ' <a class="btn btn-info" href="' . $directory->getmailtolink($list) . '"><i class="fa fa-envelope"></i> Send Email To List</a></h3>';
 
         echo '<ul class="listmembers">';
         foreach ($listemails as $listemail) {
