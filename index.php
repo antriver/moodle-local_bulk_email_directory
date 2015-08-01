@@ -7,8 +7,7 @@
  */
 
 require dirname(dirname(dirname(__FILE__))) . '/config.php';
-
-echo $OUTPUT->header();
+$directory = new local_bulk_email_directory\local\directory();
 
 /**
  * Setup page
@@ -21,7 +20,6 @@ $PAGE->requires->jquery();
 
 echo $OUTPUT->header();
 
-Hello world
+print_object($directory);
 
 echo $OUTPUT->footer();
-
