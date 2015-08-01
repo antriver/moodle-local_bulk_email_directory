@@ -21,3 +21,32 @@
 #local_bulk_email_directory .span6.dimmed:focus {
     opacity:1;
 }
+
+#local_bulk_email_directory ul {
+    margin-left:15px;
+}
+
+#local_bulk_email_directory ul li {
+    margin-bottom:15px;
+}
+
+.ui-autocomplete {
+    max-height:400px;
+    overflow-y: auto;
+}
+
+.ui-autocomplete .ui-menu-item {
+    font-size:13px;
+    padding:5px 15px;
+}
+.ui-autocomplete .ui-menu-item:nth-child(even) {
+    background-color:#f9f9f9;
+}
+
+.ui-autocomplete .ui-state-focus {
+    margin:0;
+}
+
+.ui-autocomplete .ui-menu-item:not(.ui-state-focus) {
+    border: 1px transparent solid;
+}

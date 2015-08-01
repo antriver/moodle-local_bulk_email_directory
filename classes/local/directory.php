@@ -24,17 +24,17 @@ class directory
     private $filename = 'bulk-email-data.json';
     private $path = null;
 
+    public $listsuffix = '@student.ssis-suzhou.net';
+
     private $loaded = false;
     private $data;
 
     public function __construct() {
         global $CFG;
+        $this->path = $CFG->dataroot . '/' . $this->filename;
 
         require_once($CFG->dirroot . '/cohort/lib.php');
         $this->checkpermissions();
-
-        $this->path = $CFG->dataroot . '/' . $this->filename;
-        //$this->loaddata();
     }
 
     /**
@@ -102,7 +102,7 @@ class directory
      * Returns all list names.
      * @return array
      */
-    public function getlists() {
+    public function getalllists() {
         $this->loaddata();
 
         $lists = array();
@@ -111,31 +111,109 @@ class directory
             $lists += $sectionlists;
         }
 
+        sort($lists);
         return $lists;
     }
 
     /**
-     * Returns lists that contain the searh term in the name.
+     * Returns lists that contain the given search term in the name.
      * @param  string $query
      * @return array
      */
     public function searchlists($query) {
-        $lists = $this->getlists();
+        $lists = $this->getalllists();
 
         $lists = array_filter($lists, function($name) use ($query) {
             return stripos($name, $query) !== false;
         });
 
+        sort($lists);
         return $lists;
+    }
+
+    /**
+     * Returns the email addresses on the given list name.
+     * @param  string $list
+     * @return array
+     */
+    public function getlistemails($list) {
+        $this->loaddata();
+
+        foreach ($this->data as $section => $sectionlists) {
+            foreach ($sectionlists as $listname => $listemails) {
+                if ($listname === $list) {
+                    sort($listemails);
+                    return $listemails;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
      * Returns all unique email addresses that appear on any list.
      * @return array
      */
-    public function getemails()
-    {
+    public function getallemails() {
+        $this->loaddata();
 
+        $emails = array();
+        foreach ($this->data as $section => $sectionlists) {
+            foreach ($sectionlists as $listname => $listemails) {
+                $emails += $listemails;
+            }
+        }
+
+        $emails = array_unique($emails);
+        sort($emails);
+        return $emails;
+    }
+
+    /**
+     * Returns email addresses that appear on any list that contain the given search term.
+     * @param  string $query
+     * @return array
+     */
+    public function searchemails($query) {
+        $emails = $this->getallemails();
+
+        $emails = array_filter($emails, function($email) use ($query) {
+            return stripos($email, $query) !== false;
+        });
+
+        sort($emails);
+        return $emails;
+    }
+
+    /**
+     * Returns all lists that the given email address appears on.
+     * @param  string $email
+     * @return array
+     */
+    public function getlistsforemail($email) {
+        $this->loaddata();
+
+        $lists = array();
+        foreach ($this->data as $section => $sectionlists) {
+            foreach ($sectionlists as $listname => $listemails) {
+                if (in_array($email, $listemails)) {
+                    $lists[] = $listname;
+                }
+            }
+        }
+
+        sort($lists);
+        return $lists;
+    }
+
+    public function getmailtolink($list) {
+
+        if (stripos($list, 'usebcc') === 0) {
+            return 'mailto:?bcc=' . $list . $this->listsuffix;
+        }
+
+        return 'mailto:' . $list . $this->listsuffix;
     }
 
 }

@@ -30,7 +30,12 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/local/bulk_email_directory/');
 $PAGE->set_title(get_string('pagetitle', 'local_bulk_email_directory'));
 $PAGE->set_heading(get_string('pageheading', 'local_bulk_email_directory'));
+
 $PAGE->requires->jquery();
+$PAGE->requires->jquery_plugin('ui');
+$PAGE->requires->jquery_plugin('ui-css');
+
+$PAGE->requires->js('/local/bulk_email_directory/assets/js/js.js');
 $PAGE->requires->css('/local/bulk_email_directory/assets/css/style.css');
 
 echo $OUTPUT->header();
@@ -52,14 +57,14 @@ $email = optional_param('email', false, PARAM_RAW);
 
                 <div class="row-fluid">
                     <div class="span10">
-                        <input name="list" class="input-block-level" type="text" placeholder="Start typing a list name" value="<?php echo $list; ?>" />
+                        <input id="list-input" name="list" class="input-block-level" type="text" placeholder="Start typing a list name" value="<?php echo $list; ?>" />
                     </div>
                     <div class="span2">
                         <button type="submit" class="btn btn-block btn-primary">Search</button>
                     </div>
                 </div>
 
-                <span class="help-block"><strong>e.g.</strong> usebccparentsALL@student.ssis-suzhou.net</span>
+                <span class="help-block"><strong>e.g.</strong> usebccparentsALL<?php echo $directory->listsuffix; ?></span>
 
             </form>
 
@@ -73,7 +78,7 @@ $email = optional_param('email', false, PARAM_RAW);
 
                 <div class="row-fluid">
                     <div class="span10">
-                        <input name="email" class="input-block-level" type="text" placeholder="Start typing an email address" value="<?php echo $email; ?>" />
+                        <input id="email-input" name="email" class="input-block-level" type="text" placeholder="Start typing an email address" value="<?php echo $email; ?>" />
                     </div>
                     <div class="span2">
                         <button type="submit" class="btn btn-block btn-primary">Search</button>
@@ -92,18 +97,69 @@ $email = optional_param('email', false, PARAM_RAW);
 <?php
 
 if (!empty($list)) {
-    ?>
-    <h2><i class="fa fa-search"></i> List results for &quot;<?php echo htmlspecialchars($list, ENT_QUOTES, 'UTF-8'); ?>&quot;</h2>
-    <?
 
-    print_object($directory->searchlists('GRADE4'));
+    $listemails = $directory->getlistemails($list);
+
+    if ($listemails === null) {
+
+        ?>
+        <div class="alert alert-danger">
+            <i class="fa fa-info-circle"></i> No lists called <strong><?php echo htmlspecialchars($list, ENT_QUOTES, 'UTF-8'); ?></strong> were found.
+        </div>
+        <?php
+
+    } elseif (empty($listemails)) {
+
+        ?>
+        <div class="alert alert-danger">
+            <i class="fa fa-info-circle"></i> The list <strong><?php echo htmlspecialchars($list, ENT_QUOTES, 'UTF-8'); ?></strong> is empty.
+        </div>
+        <?php
+
+    } else {
+
+        echo '<h3><i class="fa fa-list-alt"></i> <strong>' . htmlspecialchars($list, ENT_QUOTES, 'UTF-8') . '</strong>' . $directory->listsuffix . ' <a class="btn btn-primary" href="' . $directory->getmailtolink($list) . '"><i class="fa fa-envelope"></i> Send Email To List</a></h3>';
+
+        echo '<ul class="listmembers">';
+        foreach ($listemails as $listemail) {
+            echo '<li>';
+                echo '<a class="btn btn-mini btn-success" href="?email=' . $listemail . '"><i class="fa fa-users"></i> View Other Lists</a> ';
+                echo '<a class="btn btn-mini btn-info" href="mailto:' . $listemail . '"><i class="fa fa-envelope"></i> Send Email To User</a> ';
+                echo $listemail;
+             echo '</li>';
+        }
+        echo '</ul>';
+
+    }
 }
 
 if (!empty($email)) {
     ?>
-    <h2><i class="fa fa-search"></i> &quot;<?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?>&quot; Appears On These Lists</h2>
+    <h3><i class="fa fa-search"></i> &quot;<strong><?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?></strong>&quot; Appears On These Lists</h3>
+    <?php
 
-    <?
+    $lists = $directory->getlistsforemail($email);
+
+    if (empty($lists)) {
+        ?>
+        <div class="alert alert-danger">
+            <i class="fa fa-info-circle"></i> <strong><?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?></strong> was not found on any lists.
+        </div>
+        <?php
+    } else {
+        echo '<ul class="emaillists">';
+
+        foreach ($lists as $list) {
+            echo '<li>';
+                echo '<a class="btn btn-mini btn-success" href="?list=' . $list . '"><i class="fa fa-users"></i> View List</a> ';
+                echo '<a class="btn btn-mini btn-info" href="' . $directory->getmailtolink($list) . '"><i class="fa fa-envelope"></i> Send Email To List</a> ';
+                echo '<strong>' . $list . '</strong>' . $directory->listsuffix;
+             echo '</li>';
+        }
+
+        echo '</ul>';
+    }
+
 }
 
 ?>
