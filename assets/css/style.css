@@ -1,0 +1,23 @@
+#local_bulk_email_directory input[type=text] {
+    padding:20px 15px;
+}
+
+#local_bulk_email_directory form .btn {
+    margin:0;
+    padding: 10px 0;
+}
+
+#local_bulk_email_directory .help-block {
+    padding:0 10px 10px 10px;
+    opacity:.8;
+}
+
+#local_bulk_email_directory .span6.dimmed {
+    opacity:.4;
+}
+
+#local_bulk_email_directory .span6.dimmed:hover,
+#local_bulk_email_directory .span6.dimmed:active,
+#local_bulk_email_directory .span6.dimmed:focus {
+    opacity:1;
+}

@@ -24,6 +24,7 @@ class directory
     private $filename = 'bulk-email-data.json';
     private $path = null;
 
+    private $loaded = false;
     private $data;
 
     public function __construct() {
@@ -33,9 +34,14 @@ class directory
         $this->checkpermissions();
 
         $this->path = $CFG->dataroot . '/' . $this->filename;
-        $this->loaddata();
+        //$this->loaddata();
     }
 
+    /**
+     * Check if the current logged in user has permission to view bulk emails.
+     * @throws \Exception
+     * @return boolean
+     */
     private function checkpermissions() {
         global $USER;
 
@@ -63,7 +69,15 @@ class directory
         throw new Exception("You don't have permission to do that.");
     }
 
+    /**
+     * Read and parse the data file into memory.
+     * @return boolean
+     */
     private function loaddata() {
+        if ($this->loaded) {
+            return true;
+        }
+
         if (!is_readable($this->path)) {
             throw new Exception("Unable to read bulk email data file.");
         }
@@ -73,13 +87,55 @@ class directory
             throw new Exception("Bulk email data file is empty.");
         }
 
-        $data = json_decode($contents);
+        $data = json_decode($contents, true);
         unset($contents);
         if (empty($data)) {
             throw new Exception("Unable to parse JSON in bulk email data file.");
         }
 
         $this->data = $data;
+        $this->loaded = true;
         return true;
     }
+
+    /**
+     * Returns all list names.
+     * @return array
+     */
+    public function getlists() {
+        $this->loaddata();
+
+        $lists = array();
+        foreach ($this->data as $section => $sectionlists) {
+            $sectionlists = array_keys($sectionlists);
+            $lists += $sectionlists;
+        }
+
+        return $lists;
+    }
+
+    /**
+     * Returns lists that contain the searh term in the name.
+     * @param  string $query
+     * @return array
+     */
+    public function searchlists($query) {
+        $lists = $this->getlists();
+
+        $lists = array_filter($lists, function($name) use ($query) {
+            return stripos($name, $query) !== false;
+        });
+
+        return $lists;
+    }
+
+    /**
+     * Returns all unique email addresses that appear on any list.
+     * @return array
+     */
+    public function getemails()
+    {
+
+    }
+
 }
