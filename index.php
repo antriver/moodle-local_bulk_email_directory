@@ -108,7 +108,7 @@ if (!empty($list)) {
         </div>
         <?php
 
-    } elseif (empty($listemails)) {
+    } else if (empty($listemails)) {
 
         ?>
         <div class="alert alert-danger">

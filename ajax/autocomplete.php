@@ -24,7 +24,7 @@ require(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 $directory = new local_bulk_email_directory\local\directory();
 
 $type = required_param('type', PARAM_RAW);
-$term =  required_param('term', PARAM_RAW);
+$term = required_param('term', PARAM_RAW);
 
 header('Content-Type: application/json');
 
@@ -33,7 +33,7 @@ if ($type === 'list') {
     $data = $directory->searchlists($term);
     echo json_encode($data);
 
-} elseif ($type === 'email') {
+} else if ($type === 'email') {
 
     $data = $directory->searchemails($term);
     echo json_encode($data);
