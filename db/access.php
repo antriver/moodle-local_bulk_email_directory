@@ -15,15 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Capabilities for search block
+ *
  * @package    local_bulk_email_directory
- * @copyright  Anthony Kuske <www.anthonykuske.com>
+ * @copyright  2015 Anthony Kuske <www.anthonykuske.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Bulk Email Directory';
+defined('MOODLE_INTERNAL') || die();
 
-$string['pagetitle'] = 'Bulk Email Directory';
-$string['pageheading'] = 'Bulk Email Directory';
+$capabilities = array(
 
-// Capability
-$string['bulk_email_directory:view'] = 'View bulk email addresses';
+    // Ability for users to view emails
+    'local/bulk_email_directory:view' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        ),
+    ),
+
+);
