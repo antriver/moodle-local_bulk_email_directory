@@ -98,7 +98,7 @@ $email = optional_param('email', false, PARAM_RAW);
 
 if (!empty($list)) {
 
-    $listemails = $directory->getlistemails($list);
+    $listemails = $directory->get_list_emails($list);
 
     if ($listemails === null) {
 
@@ -120,7 +120,7 @@ if (!empty($list)) {
 
         echo '<h3><i class="fa fa-list-alt"></i>
         <strong>' . htmlspecialchars($list, ENT_QUOTES, 'UTF-8') . '</strong>' . $directory->listsuffix . '
-        <a class="btn btn-info" href="' . $directory->getmailtolink($list) . '"><i class="fa fa-envelope"></i> Send Email To List</a>
+        <a class="btn btn-info" href="' . $directory->get_mailto_link($list) . '"><i class="fa fa-envelope"></i> Send Email To List</a>
         </h3>';
 
         echo '<ul class="listmembers">';
@@ -141,7 +141,7 @@ if (!empty($email)) {
     <h3><i class="fa fa-search"></i> &quot;<strong><?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?></strong>&quot; Appears On These Lists</h3>
     <?php
 
-    $lists = $directory->getlistsforemail($email);
+    $lists = $directory->get_lists_for_email($email);
 
     if (empty($lists)) {
         ?>
@@ -155,7 +155,7 @@ if (!empty($email)) {
         foreach ($lists as $list) {
             echo '<li>';
                 echo '<a class="btn btn-mini btn-success" href="?list=' . $list . '"><i class="fa fa-users"></i> View List</a> ';
-                echo '<a class="btn btn-mini btn-info" href="' . $directory->getmailtolink($list) . '"><i class="fa fa-envelope"></i> Send Email To List</a> ';
+                echo '<a class="btn btn-mini btn-info" href="' . $directory->get_mailto_link($list) . '"><i class="fa fa-envelope"></i> Send Email To List</a> ';
                 echo '<strong>' . $list . '</strong>' . $directory->listsuffix;
              echo '</li>';
         }

@@ -30,7 +30,7 @@ header('Content-Type: application/json');
 
 if ($type === 'list') {
 
-    $data = $directory->searchlists($term);
+    $data = $directory->search_lists($term);
     echo json_encode($data);
 
 } else if ($type === 'email') {

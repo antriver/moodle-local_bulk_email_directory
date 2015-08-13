@@ -34,22 +34,23 @@ class directory
         $this->path = $CFG->dataroot . '/' . $this->filename;
 
         require_once($CFG->dirroot . '/cohort/lib.php');
-        $this->checkpermissions();
+        $this->check_permissions();
     }
 
     /**
      * Check if the current logged in user has permission to view bulk emails.
-     * @throws \Exception
+     * FIXME: Hardcoded for SSIS
+     *
+     * @throws Exception
      * @return boolean
      */
-    private function checkpermissions() {
+    private function check_permissions() {
         global $USER;
 
         // Ideally this would use a capability check, but that requires a system level role assigned to all teachers
         // require_capability('local/bulk_email_directory:view', context_system::instance());
-
         // Instead check the user is in a valid cohort
-        // FIXME: Hardcoded for SSIS
+
         require_login();
 
         if (is_siteadmin()) {
@@ -71,9 +72,10 @@ class directory
 
     /**
      * Read and parse the data file into memory.
+     *
      * @return boolean
      */
-    private function loaddata() {
+    private function load_data() {
         if ($this->loaded) {
             return true;
         }
@@ -100,10 +102,11 @@ class directory
 
     /**
      * Returns all list names.
+     *
      * @return array
      */
-    public function getalllists() {
-        $this->loaddata();
+    public function get_all_lists() {
+        $this->load_data();
 
         $lists = array();
         foreach ($this->data as $section => $sectionlists) {
@@ -117,11 +120,12 @@ class directory
 
     /**
      * Returns lists that contain the given search term in the name.
+     *
      * @param  string $query
      * @return array
      */
-    public function searchlists($query) {
-        $lists = $this->getalllists();
+    public function search_lists($query) {
+        $lists = $this->get_all_lists();
 
         $lists = array_filter($lists, function($name) use ($query) {
             return stripos($name, $query) !== false;
@@ -133,11 +137,12 @@ class directory
 
     /**
      * Returns the email addresses on the given list name.
+     *
      * @param  string $list
      * @return array
      */
-    public function getlistemails($list) {
-        $this->loaddata();
+    public function get_list_emails($list) {
+        $this->load_data();
 
         foreach ($this->data as $section => $sectionlists) {
             foreach ($sectionlists as $listname => $listemails) {
@@ -153,10 +158,11 @@ class directory
 
     /**
      * Returns all unique email addresses that appear on any list.
+     *
      * @return array
      */
-    public function getallemails() {
-        $this->loaddata();
+    public function get_all_emails() {
+        $this->load_data();
 
         $emails = array();
         foreach ($this->data as $section => $sectionlists) {
@@ -172,11 +178,12 @@ class directory
 
     /**
      * Returns email addresses that appear on any list that contain the given search term.
+     *
      * @param  string $query
      * @return array
      */
     public function searchemails($query) {
-        $emails = $this->getallemails();
+        $emails = $this->get_all_emails();
 
         $emails = array_filter($emails, function($email) use ($query) {
             return stripos($email, $query) !== false;
@@ -188,11 +195,12 @@ class directory
 
     /**
      * Returns all lists that the given email address appears on.
+     *
      * @param  string $email
      * @return array
      */
-    public function getlistsforemail($email) {
-        $this->loaddata();
+    public function get_lists_for_email($email) {
+        $this->load_data();
 
         $lists = array();
         foreach ($this->data as $section => $sectionlists) {
@@ -207,7 +215,13 @@ class directory
         return $lists;
     }
 
-    public function getmailtolink($list) {
+    /**
+     * Returns a mailto link for the given list name.
+     *
+     * @param  string $list List name
+     * @return string
+     */
+    public function get_mailto_link($list) {
 
         if (stripos($list, 'usebcc') === 0) {
             return 'mailto:?bcc=' . $list . $this->listsuffix;
