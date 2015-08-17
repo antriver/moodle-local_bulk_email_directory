@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2015081400;
+$plugin->version = 2015081700;
 $plugin->requires = 2013111800; // MOODLE_26_STABLE.
 $plugin->component = 'local_bulk_email_directory';

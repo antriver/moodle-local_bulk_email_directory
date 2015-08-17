@@ -43,8 +43,7 @@ class directory
     private $filename = 'bulk-email-data.json';
 
     /**
-     * Path to the data file.
-     * (Filled by constructor)
+     * Path to the data file (filled by constructor).
      *
      * @var string
      */
@@ -76,6 +75,7 @@ class directory
      */
     public function __construct() {
         global $CFG;
+
         $this->path = $CFG->dataroot . '/' . $this->filename;
 
         require_once($CFG->dirroot . '/cohort/lib.php');
@@ -92,7 +92,6 @@ class directory
      * @return boolean
      */
     private function check_permissions() {
-
         global $USER;
 
         require_login();
@@ -120,6 +119,7 @@ class directory
      * @return boolean
      */
     private function load_data() {
+
         if ($this->loaded) {
             return true;
         }
@@ -145,20 +145,20 @@ class directory
     }
 
     /**
-     * Returns all list names.
+     * Returns all list names, organised by section.
      *
      * @return array
      */
     public function get_all_lists() {
+
         $this->load_data();
 
         $lists = array();
-        foreach ($this->data as $section => $sectionlists) {
-            $sectionlists = array_keys($sectionlists);
-            $lists += $sectionlists;
+        foreach ($this->data as $sectionname => $sectionlists) {
+            ksort($sectionlists);
+            $lists[$sectionname] = array_keys($sectionlists);
         }
 
-        sort($lists);
         return $lists;
     }
 
@@ -166,17 +166,31 @@ class directory
      * Returns lists that contain the given search term in the name.
      *
      * @param  string $query
+     * @param  bool $flatten If true will return an array of just list names.
+     *                       If false will return list names organised by section.
      * @return array
      */
-    public function search_lists($query) {
-        $lists = $this->get_all_lists();
+    public function search_lists($query, $flatten = false) {
 
-        $lists = array_filter($lists, function($name) use ($query) {
-            return stripos($name, $query) !== false;
-        });
+        $sections = $this->get_all_lists();
 
-        sort($lists);
-        return $lists;
+        foreach ($sections as $sectionname => &$sectionlists) {
+            $sectionlists = array_filter($sectionlists, function($name) use ($query) {
+                return stripos($name, $query) !== false;
+            });
+        }
+        unset($sectionlists);
+
+        if ($flatten) {
+            $return = [];
+            foreach ($sections as $sectionlists) {
+                $return = array_merge($return, $sectionlists);
+            }
+            sort($return);
+            return $return;
+        }
+
+        return $sections;
     }
 
     /**
@@ -186,6 +200,7 @@ class directory
      * @return array
      */
     public function get_list_emails($list) {
+
         $this->load_data();
 
         foreach ($this->data as $section => $sectionlists) {
@@ -206,12 +221,13 @@ class directory
      * @return array
      */
     public function get_all_emails() {
+
         $this->load_data();
 
         $emails = array();
         foreach ($this->data as $section => $sectionlists) {
             foreach ($sectionlists as $listname => $listemails) {
-                $emails += $listemails;
+                $emails = array_merge($emails, $listemails);
             }
         }
 
@@ -226,7 +242,8 @@ class directory
      * @param  string $query
      * @return array
      */
-    public function searchemails($query) {
+    public function search_emails($query) {
+
         $emails = $this->get_all_emails();
 
         $emails = array_filter($emails, function($email) use ($query) {
@@ -244,6 +261,7 @@ class directory
      * @return array
      */
     public function get_lists_for_email($email) {
+
         $this->load_data();
 
         $lists = array();
