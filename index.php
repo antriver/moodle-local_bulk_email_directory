@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Display the bulk email directoy.
+ *
  * @package    local_bulk_email_directory
  * @copyright  Anthony Kuske <www.anthonykuske.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -57,7 +59,14 @@ $email = optional_param('email', false, PARAM_RAW);
 
                 <div class="row-fluid">
                     <div class="span10">
-                        <input id="list-input" name="list" class="input-block-level" type="text" placeholder="Start typing a list name" value="<?php echo $list; ?>" />
+                        <input
+                            id="list-input"
+                            name="list"
+                            class="input-block-level"
+                            type="text"
+                            placeholder="Start typing a list name"
+                            value="<?php echo (!empty($list) ? s($list) : ''); ?>"
+                        />
                     </div>
                     <div class="span2">
                         <button type="submit" class="btn btn-block btn-primary">Search</button>
@@ -78,14 +87,23 @@ $email = optional_param('email', false, PARAM_RAW);
 
                 <div class="row-fluid">
                     <div class="span10">
-                        <input id="email-input" name="email" class="input-block-level" type="text" placeholder="Start typing an email address" value="<?php echo $email; ?>" />
+                        <input
+                            id="email-input"
+                            name="email"
+                            class="input-block-level"
+                            type="text"
+                            placeholder="Start typing an email address"
+                            value="<?php echo (!empty($email) ? s($email) : ''); ?>"
+                        />
                     </div>
                     <div class="span2">
                         <button type="submit" class="btn btn-block btn-primary">Search</button>
                     </div>
                 </div>
 
-                <span class="help-block">This can be a student, teacher, or parent. <strong>e.g.</strong> happyparent@example.com</span>
+                <span class="help-block">
+                    This can be a student, teacher, or parent. <strong>e.g.</strong> happyparent@example.com
+                </span>
 
             </form>
 
@@ -104,7 +122,8 @@ if (!empty($list)) {
 
         ?>
         <div class="alert alert-danger">
-            <i class="fa fa-info-circle"></i> No lists called <strong><?php echo htmlspecialchars($list, ENT_QUOTES, 'UTF-8'); ?></strong> were found.
+            <i class="fa fa-info-circle"></i>
+            No lists called <strong><?php p($list); ?></strong> were found.
         </div>
         <?php
 
@@ -112,22 +131,32 @@ if (!empty($list)) {
 
         ?>
         <div class="alert alert-danger">
-            <i class="fa fa-info-circle"></i> The list <strong><?php echo htmlspecialchars($list, ENT_QUOTES, 'UTF-8'); ?></strong> is empty.
+            <i class="fa fa-info-circle"></i>
+            The list <strong><?php p($list); ?></strong> is empty.
         </div>
         <?php
 
     } else {
 
         echo '<h3><i class="fa fa-list-alt"></i>
-        <strong>' . htmlspecialchars($list, ENT_QUOTES, 'UTF-8') . '</strong>' . $directory->listsuffix . '
-        <a class="btn btn-info" href="' . $directory->get_mailto_link($list) . '"><i class="fa fa-envelope"></i> Send Email To List</a>
+        <strong>' . s($list) . '</strong>' . $directory->listsuffix . '
+        <a class="btn btn-info" href="' . $directory->get_mailto_link($list) . '">
+            <i class="fa fa-envelope"></i> Send Email To List
+        </a>
         </h3>';
 
         echo '<ul class="listmembers">';
         foreach ($listemails as $listemail) {
             echo '<li>';
-                echo '<a class="btn btn-mini btn-success" href="?email=' . $listemail . '"><i class="fa fa-users"></i> View Other Lists</a> ';
-                echo '<a class="btn btn-mini btn-info" href="mailto:' . $listemail . '"><i class="fa fa-envelope"></i> Send Email To User</a> ';
+
+                echo '<a class="btn btn-mini btn-success" href="?email=' . $listemail . '">
+                    <i class="fa fa-users"></i> View Other Lists
+                </a> ';
+
+                echo '<a class="btn btn-mini btn-info" href="mailto:' . $listemail . '">
+                    <i class="fa fa-envelope"></i> Send Email To User
+                </a> ';
+
                 echo $listemail;
              echo '</li>';
         }
@@ -138,7 +167,9 @@ if (!empty($list)) {
 
 if (!empty($email)) {
     ?>
-    <h3><i class="fa fa-search"></i> &quot;<strong><?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?></strong>&quot; Appears On These Lists</h3>
+    <h3>
+        <i class="fa fa-search"></i>
+        &quot;<strong><?php p($email); ?></strong>&quot; Appears On These Lists</h3>
     <?php
 
     $lists = $directory->get_lists_for_email($email);
@@ -146,7 +177,8 @@ if (!empty($email)) {
     if (empty($lists)) {
         ?>
         <div class="alert alert-danger">
-            <i class="fa fa-info-circle"></i> <strong><?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?></strong> was not found on any lists.
+            <i class="fa fa-info-circle"></i>
+            <strong><?php p($email); ?></strong> was not found on any lists.
         </div>
         <?php
     } else {
@@ -154,9 +186,17 @@ if (!empty($email)) {
 
         foreach ($lists as $list) {
             echo '<li>';
-                echo '<a class="btn btn-mini btn-success" href="?list=' . $list . '"><i class="fa fa-users"></i> View List</a> ';
-                echo '<a class="btn btn-mini btn-info" href="' . $directory->get_mailto_link($list) . '"><i class="fa fa-envelope"></i> Send Email To List</a> ';
+
+                echo '<a class="btn btn-mini btn-success" href="?list=' . $list . '">
+                    <i class="fa fa-users"></i> View List
+                </a> ';
+
+                echo '<a class="btn btn-mini btn-info" href="' . $directory->get_mailto_link($list) . '">
+                    <i class="fa fa-envelope"></i> Send Email To List
+                </a> ';
+
                 echo '<strong>' . $list . '</strong>' . $directory->listsuffix;
+
              echo '</li>';
         }
 

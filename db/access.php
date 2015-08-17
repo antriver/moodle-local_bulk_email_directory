@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
-    // Ability for users to view emails
+    // Ability for users to view emails.
     'local/bulk_email_directory:view' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',

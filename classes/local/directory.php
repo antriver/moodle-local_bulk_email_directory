@@ -14,21 +14,66 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Functions for the directory.
+ *
+ * @package    local_bulk_email_directory
+ * @copyright  Anthony Kuske <www.anthonykuske.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_bulk_email_directory\local;
 
 use Exception;
 
+/**
+ * Functions for the directory.
+ *
+ * @package    local_bulk_email_directory
+ * @copyright  Anthony Kuske <www.anthonykuske.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class directory
 {
-    // Location of the data file
+    /**
+     * Name of the data file.
+     *
+     * @var string
+     */
     private $filename = 'bulk-email-data.json';
-    private $path = null;
 
+    /**
+     * Path to the data file.
+     * (Filled by constructor)
+     *
+     * @var string
+     */
+    private $path;
+
+    /**
+     * Email domain to append to the name of bulk email lists.
+     *
+     * @var string
+     */
     public $listsuffix = '@student.ssis-suzhou.net';
 
+    /**
+     * Has the data file been loaded?
+     *
+     * @var boolean
+     */
     private $loaded = false;
+
+    /**
+     * Contains the contents of the data file.
+     *
+     * @var object
+     */
     private $data;
 
+    /**
+     * Constructor.
+     */
     public function __construct() {
         global $CFG;
         $this->path = $CFG->dataroot . '/' . $this->filename;
@@ -39,17 +84,16 @@ class directory
 
     /**
      * Check if the current logged in user has permission to view bulk emails.
+     * Ideally this would use a capability check, but that requires a system level role assigned to all teachers,
+     * so it checks user is in a cohort instead.
      * FIXME: Hardcoded for SSIS
      *
      * @throws Exception
      * @return boolean
      */
     private function check_permissions() {
-        global $USER;
 
-        // Ideally this would use a capability check, but that requires a system level role assigned to all teachers
-        // require_capability('local/bulk_email_directory:view', context_system::instance());
-        // Instead check the user is in a valid cohort
+        global $USER;
 
         require_login();
 
@@ -58,8 +102,8 @@ class directory
         }
 
         $cohortids = array(
-            73, // teachersALL
-            114, // secretariesALL
+            73, // ID of the teachersALL cohort.
+            114, // ID of the secretariesALL cohort.
         );
         foreach ($cohortids as $cohortid) {
             if (cohort_is_member($cohortid, $USER->id)) {

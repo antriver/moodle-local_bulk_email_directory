@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Plugin info.
+ *
  * @package    local_bulk_email_directory
  * @copyright  Anthony Kuske <www.anthonykuske.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,5 +25,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version = 2015081400;
-$plugin->requires = 2013051400; // MOODLE_25
+$plugin->requires = 2013111800; // MOODLE_26_STABLE.
 $plugin->component = 'local_bulk_email_directory';
