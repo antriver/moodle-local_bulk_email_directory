@@ -1,5 +1,9 @@
 #local_bulk_email_directory input[type=text] {
-    padding:20px 15px;
+    padding:5px 15px;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    width: calc(100% - 30px);
 }
 
 #local_bulk_email_directory form .btn {
