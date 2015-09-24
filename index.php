@@ -38,7 +38,7 @@ $PAGE->requires->jquery_plugin('ui');
 $PAGE->requires->jquery_plugin('ui-css');
 
 $PAGE->requires->js('/local/bulk_email_directory/assets/js/js.js');
-$PAGE->requires->css('/local/bulk_email_directory/assets/css/style.css');
+$PAGE->requires->css('/local/bulk_email_directory/assets/css/style.css?v=2015092300');
 
 echo $OUTPUT->header();
 
