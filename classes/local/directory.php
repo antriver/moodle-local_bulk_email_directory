@@ -116,6 +116,7 @@ class directory
     /**
      * Read and parse the data file into memory.
      *
+     * @throws Exception
      * @return boolean
      */
     private function load_data() {
@@ -182,7 +183,7 @@ class directory
         unset($sectionlists);
 
         if ($flatten) {
-            $return = [];
+            $return = array();
             foreach ($sections as $sectionlists) {
                 $return = array_merge($return, $sectionlists);
             }
